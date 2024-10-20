@@ -16,7 +16,7 @@ class ReactJSONSchemaFormWidget(Widget):
 
     def __init__(
         self,
-        schema,
+        schema=None,
         ui_schema=None,
         on_render=None,
         extra_css=None,
