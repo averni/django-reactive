@@ -5,7 +5,7 @@ from django.forms import Media
 from django.forms.widgets import Widget
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +13,11 @@ logger = logging.getLogger(__name__)
 class ReactJSONSchemaFormWidget(Widget):
 
     template_name = "django_reactive.html"
+    default_css_classes = {
+        "label": "control-label",
+        "input": "form-control",
+        "description": "field-description",
+    }
 
     def __init__(
         self,
@@ -21,6 +26,7 @@ class ReactJSONSchemaFormWidget(Widget):
         on_render=None,
         extra_css=None,
         extra_js=None,
+        css_classes=None,
         **kwargs,
     ):
         self.schema = schema
@@ -29,6 +35,8 @@ class ReactJSONSchemaFormWidget(Widget):
         self.on_render_object = None
         self.extra_css = extra_css
         self.extra_js = extra_js
+        default_css_classes = getattr(settings, "DJANGO_REACTIVE_CSS_CLASSES", {})
+        self.css_classes = css_classes or default_css_classes or self.default_css_classes
         super().__init__(**kwargs)
 
     @property
@@ -65,6 +73,7 @@ class ReactJSONSchemaFormWidget(Widget):
             "name": name,
             "schema": json.dumps(self.schema),
             "ui_schema": json.dumps(self.ui_schema) if self.ui_schema else "{}",
+            "css_classes": json.dumps(self.css_classes) if self.css_classes else "{}",
         }
 
         return mark_safe(render_to_string(self.template_name, context))

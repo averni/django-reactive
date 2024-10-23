@@ -1,4 +1,5 @@
-function djangoReactiveRenderForm(name, schema, ui_schema, data) {
+
+function djangoReactiveRenderForm(name, schema, ui_schema, data, css_classes) {
 
     var Form = JSONSchemaForm.default, // required by json-react-schema-form
         textarea = document.getElementById('id_' + name),
@@ -21,11 +22,11 @@ function djangoReactiveRenderForm(name, schema, ui_schema, data) {
             return _el('div');
         }
 
-        return _el("label", {className: "control-label", htmlFor: id},
+        return _el("label", { className: css_classes["label"], htmlFor: id },
             label,
             required && _el("span",
-            {className: "required"},
-            '*'
+                { className: "required" },
+                '*'
             )
         );
     }
@@ -39,7 +40,7 @@ function djangoReactiveRenderForm(name, schema, ui_schema, data) {
 
     function DescriptionField(props) {
         var id = props.id, description = props.description;
-        return _el('p', {id: id, className: 'field-description'}, description);
+        return _el('p', { id: id, className: css_classes["description"] }, description);
     }
 
     function FieldTemplate(props) {
@@ -60,12 +61,12 @@ function djangoReactiveRenderForm(name, schema, ui_schema, data) {
 
         return _el(
             "div",
-            {className: classNames},
-            displayLabel && _el(Label, {label: label, required: required, id: id}),
+            { className: classNames },
+            displayLabel && _el(Label, { label: label, required: required, id: id }),
             displayLabel && description ? description : null,
             _el(
                 "div",
-                {className: "form-input"},
+                { className: css_classes["input"] },
                 children
             ),
             errors,
@@ -75,22 +76,22 @@ function djangoReactiveRenderForm(name, schema, ui_schema, data) {
 
     ReactDOM.render((
         _el(Form, {
-                schema: schema,
-                formData: data,
-                uiSchema: ui_schema,
-                liveValidate: true,
-                showErrorList: false,
-                onChange: function (form) {
-                    textarea.value = JSON.stringify(form.formData);
-                },
-                transformErrors: transformErrors,
-                fields: {
-                    TitleField: TitleField,
-                    DescriptionField: DescriptionField,
-                },
-                idPrefix: "id_" + name + "_form",
-                FieldTemplate: FieldTemplate,
-            }, _el("span") // render an empty span as child in order to avoid displaying submit button
+            schema: schema,
+            formData: data,
+            uiSchema: ui_schema,
+            liveValidate: true,
+            showErrorList: false,
+            onChange: function (form) {
+                textarea.value = JSON.stringify(form.formData);
+            },
+            transformErrors: transformErrors,
+            fields: {
+                TitleField: TitleField,
+                DescriptionField: DescriptionField,
+            },
+            idPrefix: "id_" + name + "_form",
+            FieldTemplate: FieldTemplate,
+        }, _el("span") // render an empty span as child in order to avoid displaying submit button
         )
     ), document.getElementById(name + "_editor"));
 }

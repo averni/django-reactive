@@ -17,6 +17,8 @@ class ReactJSONSchemaFormField(JSONField):
         on_render=None,
         extra_css=None,
         extra_js=None,
+        css_classes=None,
+        schma_url=None,
         **kwargs,
     ):
         self.schema = schema
@@ -24,4 +26,6 @@ class ReactJSONSchemaFormField(JSONField):
         self.on_render = on_render
         self.extra_css = extra_css
         self.extra_js = extra_js
+        self.css_classes = css_classes
+        self.schma_url = schma_url
         super().__init__(**kwargs)

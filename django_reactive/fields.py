@@ -14,20 +14,27 @@ except ImportError:
 
 
 class ReactJSONSchemaField(BaseJSONField):
-    def __init__(self, schema=None, ui_schema=None, on_render=None, extra_css=None, extra_js=None, **kwargs):
-        kwargs.setdefault('default', dict)
+    def __init__(
+        self,
+        schema=None,
+        ui_schema=None,
+        on_render=None,
+        extra_css=None,
+        extra_js=None,
+        css_classes=None,
+        **kwargs,
+    ):
+        kwargs.setdefault("default", dict)
         super().__init__(**kwargs)
         self.schema = schema
         self.ui_schema = ui_schema
         self.on_render = on_render
         self.extra_css = extra_css
         self.extra_js = extra_js
+        self.css_classes = css_classes
 
     def formfield(self, **kwargs):
-        defaults = {
-            'required': not self.blank,
-            **kwargs
-        }
+        defaults = {"required": not self.blank, **kwargs}
 
         defaults.update(
             widget=ReactJSONSchemaFormWidget(
@@ -36,6 +43,7 @@ class ReactJSONSchemaField(BaseJSONField):
                 on_render=self.on_render,
                 extra_css=self.extra_css,
                 extra_js=self.extra_js,
+                css_classes=self.css_classes,
             )
         )
 
@@ -46,18 +54,18 @@ class ReactJSONSchemaField(BaseJSONField):
         try:
             validate(value, self.schema)
         except JSONSchemaValidationError:
-            raise ValidationError('This field has errors.')
+            raise ValidationError("This field has errors.")
 
     def check(self, **kwargs):
         errors = super().check(**kwargs)
         res, schema_errors = validate_json_schema(self.schema)
         if not res:
-            msg = ','.join(schema_errors)
+            msg = ",".join(schema_errors)
             errors = [
                 checks.Error(
-                    f'JSON schema is not valid: {msg}',
+                    f"JSON schema is not valid: {msg}",
                     obj=self.model,
-                    id='fields.JSON_SCHEMA_ERROR',
+                    id="fields.JSON_SCHEMA_ERROR",
                 )
             ]
 
