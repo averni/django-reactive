@@ -44,12 +44,26 @@ class ReactJSONSchemaFormWidget(Widget):
         css = ["css/django_reactive.css"]
         if self.extra_css:
             css.extend(self.extra_css)
-        js = [
-            "dist/react.js",
-            "dist/react-dom.js",
-            "dist/react-jsonschema-form.js",
-            "js/django_reactive.js",
+        airgapped = getattr(settings, "DJANGO_REACTIVE_AIRGAPPED") in [
+            "True",
+            "true",
+            "1",
         ]
+        js = [
+            "js/django_reactive.js",
+        ] + (
+            [
+                "https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js",
+                "https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js",
+                "https://cdnjs.cloudflare.com/ajax/libs/react-jsonschema-form/1.8.1/react-jsonschema-form.min.js",
+            ]
+            if not airgapped
+            else [
+                "django-reactive/react.js",
+                "django-reactive/react-dom.js",
+                "django-reactive/react-jsonschema-form.js",
+            ]
+        )
         if self.extra_js:
             js.extend(self.extra_js)
 
